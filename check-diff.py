@@ -145,11 +145,11 @@ for room in dRefCalendar :
                     continue
                 elif gCal == 'busy' :
                     # Google booked but not Itea
-                    tmpdata.append("Google Agenda booked but not ITEA calendar") # Issue
+                    tmpdata.append("Google Agenda booked but ITEA calendar not") # Issue
                     myAsciiTable.append(tmpdata)
                 elif rCal == 'busy' :
                     # Itea booked but not Google
-                    tmpdata.append("Itea calendar booked but not Google agenda") # Issue
+                    tmpdata.append("Itea calendar booked but Google agenda not") # Issue
                     myAsciiTable.append(tmpdata)
 
 # Create AsciiTable and total
