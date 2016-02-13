@@ -1,0 +1,9 @@
+[ITEA_CALENDAR]
+capucine: http://widget.itea.fr/ajax/get_info.php?info=div_dispo_GL&key=KEY&num=GITENUMBER&nbmois=12&ope=&numChambre=3&sansIframe=true
+chevrefeuille: http://widget.itea.fr/ajax/get_info.php?info=div_dispo_GL&key=KEY&num=GITENUMBER&nbmois=12&ope=&numChambre=2&sansIframe=true
+coloquinte: http://widget.itea.fr/ajax/get_info.php?info=div_dispo_GL&key=KEY&num=GITENUMBER&nbmois=12&ope=&numChambre=1&sansIframe=true
+
+[GOOGLE_CALENDAR]
+capucine: http://www.google.com/calendar/ical/PRIVATE/basic.ics
+chevrefeuille: http://www.google.com/calendar/ical/PRIVATE/basic.ics
+coloquinte: http://www.google.com/calendar/ical/PRIVATE/basic.ics
