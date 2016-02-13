@@ -16,3 +16,7 @@ ITEA calendar (Gites de France) to Google agenda Python check script
 	+----------------------+------+-------+-----+--------------------------------------------+
 	| Total :   7 issue(s) |      |       |     |                                            |
 	+----------------------+------+-------+-----+--------------------------------------------+
+
+# TODO
+
+Synchronize Google agenda with ITEA values
