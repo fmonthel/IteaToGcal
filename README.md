@@ -1,6 +1,6 @@
 # IteaToGcal
 
-ITEA calendar (Gites de France) to Google agenda Python sync report and fix script
+ITEA calendar (Gites de France) to Google agenda Python sync report and fix
 
 	./check-diff.py -h
 	usage: check-diff.py [-h]
@@ -14,7 +14,7 @@ ITEA calendar (Gites de France) to Google agenda Python sync report and fix scri
 	                        Action to do
 
 
-To list difference between Calendars :
+To list difference between calendars :
 
 	./check-diff.py --action list-diff
 	+----------------------+------+-------+-----+--------------------------------------------+
@@ -31,7 +31,7 @@ To list difference between Calendars :
 	| Total :   7 issue(s) |      |       |     |                                            |
 	+----------------------+------+-------+-----+--------------------------------------------+
 
-To fix and create missing events in Google Calendar fron ITEA :
+To fix and create missing events in Google Calendar from ITEA :
 
     ./check-diff.py --action create-events-from-itea-to-google
 	+------------------+------+-------+-----+------------------------------------------------------------------------------------------------------------------------------------------------------------+
