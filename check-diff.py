@@ -2,128 +2,63 @@
 #
 # check-diff.py
 #
-# Simple wrapper that compare ITEA calendar to Google Agenda
+# Simple wrapper that compare ITEA calendar to Google Agenda and fix
 #
 # Author: Florent MONTHEL (fmonthel@flox-arts.net)
 #
 
 import ConfigParser
-import requests
+import argparse
 import re
-import urllib
 import datetime
-from lxml import html
-from icalendar import Calendar
 from terminaltables import AsciiTable
-
-# Function to export ITEA data to list
-def exportIteaToList(url_html) :
-
-    # Get data from URL
-    tree = html.fromstring(requests.get(url_html).content)
-    months = tree.xpath('//caption[@data-annee]/@data-annee | //caption[@data-annee]/@data-mois')
-    days = tree.xpath('//table[@class="calend"]//span[@style="display:block;"]/@class | //table[@class="calend"]//span[@style="display:block;"]/text()')
-
-    # Parsing of date
-    tmpList = {}
-    year = ''
-    i = 0
-    for month in months :
-        # Get start date
-        if(i == 0) :
-            firstYear = month
-        if(i == 1) :
-            firstMonth = month
-        # Build list
-        if (i % 2) == 0 : # Year
-            if(year != month) :
-                year = month
-                tmpList[ str(year) ] = {}
-        else : # Month
-            tmpList[ str(year) ][ str("%02d" % int(month)) ] = {}
-        i = i + 1
-
-    # Parsing of days
-    currentYear = int(firstYear)
-    currentMonth = int(firstMonth)
-    currentDay = 1
-    i = 0
-    for day in days :
-        if (i % 2) == 0 : # Class
-            classDay = day
-            if(re.search(r"Cliquable", classDay)) :
-                dispo = 'available'
-            elif(re.search(r"occupe", classDay)) :
-                dispo = 'busy'
-            else :
-                dispo = 'nostatus'
-        else : # Day
-            if(day < currentDay) :
-                if(currentMonth == 12) :
-                    currentYear = currentYear + 1
-                    currentMonth =  1
-                else :
-                    currentMonth = currentMonth + 1
-            currentDay = day
-            tmpList[ str(currentYear) ][ str("%02d" % int(currentMonth)) ][ str("%02d" % int(currentDay)) ] = dispo
-        i = i + 1
-    
-    # Return list
-    return tmpList
-
-# Function to export GCAL data to list
-def exportGcalToList(file_ics) :
-    
-    # Get data from ICS file
-    file = open(file_ics,'rb')
-    gcal = Calendar.from_ical(file.read())
-
-    # Parsing of vevents
-    tmpList = {}
-    for vevent in gcal.walk():
-        if vevent.name == "VEVENT" and vevent.get('status') == "CONFIRMED":
-            if re.search(r"^[0-9]{8}$", str(vevent.get('dtstart').to_ical())) and re.search(r"^[0-9]{8}$", str(vevent.get('dtend').to_ical())) :            
-                startDate = datetime.datetime.strptime(vevent.get('dtstart').to_ical(), "%Y%m%d")
-                endDate = datetime.datetime.strptime(vevent.get('dtend').to_ical(), "%Y%m%d")           
-                currentDate = startDate
-                while currentDate < endDate :
-                    currentDate += datetime.timedelta(days=1)
-                    if str(currentDate.year) not in tmpList.keys() :
-                        tmpList[ str(currentDate.year) ] = {}
-                    if str(currentDate.month) not in tmpList[ str(currentDate.year) ].keys() :
-                        tmpList[ str(currentDate.year) ][ str(currentDate.month) ] = {}
-                    tmpList[ str(currentDate.year) ][ str(currentDate.month) ][ str(currentDate.day) ] = 'busy'
-    
-    # Close file and return list
-    file.close()
-    return tmpList
+from lib.itggcal import ItgGcal
+from lib.itgitea import ItgItea
 
 
 # Parameters
 Config = ConfigParser.ConfigParser()
 Config.read('conf/config.ini')
 
+# Options
+parser = argparse.ArgumentParser(description='Report difference between ITEA and GCAL and propose to fix them')
+parser.add_argument('--action', help='Action to do', 
+                    action='store', dest='action', default='list-diff',
+                    choices=['list-diff', 'purge-google-of-itea-events', 'create-events-from-itea-to-google'])
+
+args = parser.parse_args()
+
+# ITG Gcal and Itea instance
+inst_itg_gcal = ItgGcal('conf/gcal.json', 'conf/gcal-credential-validated.json', Config.get('GLOBAL','application'))
+inst_itg_itea = ItgItea()
+
+# Cleaning of events
+if args.action == 'purge-google-of-itea-events' :
+    for room, url in Config.items('GOOGLE_CALENDAR') :
+        # Id Gcal
+        gcal_id = inst_itg_gcal.get_gcal_id_from_url(Config.get('GOOGLE_CALENDAR',room))
+        # Clean events
+        inst_itg_gcal.del_events_created_from_itea(gcal_id)
+
 # Parse Reference calendar (ITEA) and populate list
 dRefCalendar = {}
 for room, url in Config.items('ITEA_CALENDAR') :
     # Populate list
-    dRefCalendar[ room ] = exportIteaToList(url)
+    dRefCalendar[ room ] = inst_itg_itea.export_itea_from_url_to_list(url)
 
 # Parse Google agenda and populate list
 dGcalCalendar = {}
 for room, url in Config.items('GOOGLE_CALENDAR') :
-    # Save file locally
-    urllib.urlretrieve (url, "data/"+room+".ics")
     # Populate list
-    dGcalCalendar[ room ] = exportGcalToList("data/"+room+".ics")
+    dGcalCalendar[ room ] = inst_itg_gcal.export_gcal_from_ics_to_list(url)
 
 # Ascii table
 myAsciiTable = [['Room','Year','Month','Day','Issue']]
 # Check diff between dRefCalendar and dGcalCalendar
-for room in dRefCalendar :
-    for year in dRefCalendar[ room ] :
-        for month in dRefCalendar[ room ][ year ] :
-            for day in dRefCalendar[ room ][ year ][ month ] :
+for room in sorted(dRefCalendar) :
+    for year in sorted(dRefCalendar[ room ]) :
+        for month in sorted(dRefCalendar[ room ][ year ]) :
+            for day in sorted(dRefCalendar[ room ][ year ][ month ]) :
                 # Get day value + build list
                 rCal = dRefCalendar[ room ][ year ][ month ][ day ]
                 tmpdata = list()
@@ -140,7 +75,7 @@ for room in dRefCalendar :
                     gCal = 'available'
                 else :
                     gCal = 'busy'
-                # Compare value
+                # Compare values
                 if rCal == gCal or rCal == 'nostatus' :
                     continue
                 elif gCal == 'busy' :
@@ -148,13 +83,37 @@ for room in dRefCalendar :
                     tmpdata.append("Google Agenda booked but ITEA calendar not") # Issue
                     myAsciiTable.append(tmpdata)
                 elif rCal == 'busy' :
-                    # Itea booked but not Google
-                    tmpdata.append("Itea calendar booked but Google agenda not") # Issue
-                    myAsciiTable.append(tmpdata)
-
+                    # Create event json
+                    endDate = datetime.datetime.strptime(year+month+day, "%Y%m%d")
+                    endDate += datetime.timedelta(days=1)
+                    event = {
+                      'summary': 'Booking from ITEA calendar',
+                      'location': Config.get('GLOBAL','location'),
+                      'description': 'Booking with data from ITEA calendar - Powered by '+Config.get('GLOBAL','application'),
+                      'start': {
+                        'date': year+'-'+month+'-'+day
+                      },
+                      'end': {
+                        #'date': year+'-'+month+'-'+day
+                        'date': str(endDate.strftime("%Y"))+'-'+str(endDate.strftime("%m"))+'-'+str(endDate.strftime("%d"))
+                      },
+                    }
+                    if args.action == 'create-events-from-itea-to-google' :
+                        # Id Gcal
+                        gcal_id = inst_itg_gcal.get_gcal_id_from_url(Config.get('GOOGLE_CALENDAR',room))
+                        # Create event
+                        event_created = inst_itg_gcal.insert_event(gcal_id,event)
+                        # Report event correction
+                        tmpdata.append("Event created : "+event_created.get('htmlLink')) # Fix
+                        myAsciiTable.append(tmpdata)
+                    else :
+                        # Itea booked but not Google
+                        tmpdata.append("Itea calendar booked but Google agenda not") # Issue
+                        myAsciiTable.append(tmpdata)
+                    
 # Create AsciiTable and total
 tmpdata = list()
-tmpdata.append("Total : " + str(len(myAsciiTable) - 1) + " issue(s)")
+tmpdata.append("Total : " + str(len(myAsciiTable) - 1) + " row(s)")
 tmpdata.append("")
 tmpdata.append("")
 tmpdata.append("")

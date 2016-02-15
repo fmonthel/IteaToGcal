@@ -1,3 +1,7 @@
+[GLOBAL]
+application: IteaToGcal
+location: 14 place Jeanne d'Arc - 45430 Checy
+
 [ITEA_CALENDAR]
 capucine: http://widget.itea.fr/ajax/get_info.php?info=div_dispo_GL&key=KEY&num=GITENUMBER&nbmois=12&ope=&numChambre=3&sansIframe=true
 chevrefeuille: http://widget.itea.fr/ajax/get_info.php?info=div_dispo_GL&key=KEY&num=GITENUMBER&nbmois=12&ope=&numChambre=2&sansIframe=true
