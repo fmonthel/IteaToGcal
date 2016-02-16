@@ -7,6 +7,7 @@
 # Author: Florent MONTHEL (fmonthel@flox-arts.net)
 #
 
+import os
 import ConfigParser
 import argparse
 import re
@@ -18,8 +19,9 @@ from lib.itgitea import ItgItea
 
 # Parameters
 time_start = datetime.datetime.now()
+file_config = os.path.join(os.path.dirname(__file__), 'conf/config.ini')
 Config = ConfigParser.ConfigParser()
-Config.read('conf/config.ini')
+Config.read(file_config)
 
 # Options
 parser = argparse.ArgumentParser(description='Report difference between ITEA and GCAL and propose to fix them')
@@ -29,7 +31,9 @@ parser.add_argument('--action', action='store', dest='action', default='list-dif
 args = parser.parse_args()
 
 # ITG Gcal and Itea instance
-inst_itg_gcal = ItgGcal('conf/gcal.json', 'conf/gcal-credential-validated.json', Config.get('GLOBAL','application'))
+file_gcal = os.path.join(os.path.dirname(__file__), 'conf/gcal.json')
+file_gcal_cred_validated = os.path.join(os.path.dirname(__file__), 'conf/gcal-credential-validated.json')
+inst_itg_gcal = ItgGcal(file_gcal, file_gcal_cred_validated, Config.get('GLOBAL','application'))
 inst_itg_itea = ItgItea()
 
 # Parse Reference calendar (ITEA) and populate list
