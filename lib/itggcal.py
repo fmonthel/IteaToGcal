@@ -25,10 +25,13 @@ class ItgGcal :
     
     def _get_cred(self) :
 
-        credentials = oauth2client.file.Storage(self.cred_validated_file).get()
+        store = oauth2client.file.Storage(self.cred_validated_file)
+        credentials = store.get()
         if not credentials or credentials.invalid:
             flow = client.flow_from_clientsecrets(self.cred_secret_file, 'https://www.googleapis.com/auth/calendar')
             flow.user_agent = self.app_name
+            store = Storage('a_credentials_file')
+            storage.put(credentials)
             credentials = tools.run_flow(flow, store)
         return credentials
     
