@@ -2,16 +2,25 @@
 
 ITEA calendar (Gites de France) to Google agenda Python sync report and fix
 
+To install prerequisites (Python lib) :
+
+    apt-get install libxml2-dev libxslt-dev python-dev # For Debian
+	pip install httplib2 terminaltables google-api-python-client icalendar requests lxml
+
+Usage :
+
 	./check-diff.py -h
-	usage: check-diff.py [-h]
+	usage: check-diff.py [-h] [--noauth_local_webserver]
 	                     [--action {list-diff,create-google-events-from-itea,delete-google-events-from-itea}]
     
 	Report difference between ITEA and GCAL and propose to fix them
-    
+     
 	optional arguments:
 	  -h, --help            show this help message and exit
+	  --noauth_local_webserver
+	                        Needed for first execution (Google Agenda
+	                        authentication)
 	  --action {list-diff,create-google-events-from-itea,delete-google-events-from-itea}
-	                        Action to do
 
 
 To list difference between calendars :
