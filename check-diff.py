@@ -17,6 +17,7 @@ from lib.itgitea import ItgItea
 
 
 # Parameters
+time_start = datetime.datetime.now()
 Config = ConfigParser.ConfigParser()
 Config.read('conf/config.ini')
 
@@ -25,7 +26,6 @@ parser = argparse.ArgumentParser(description='Report difference between ITEA and
 parser.add_argument('--noauth_local_webserver', action='store_true', help='Needed for first execution (Google Agenda authentication)')
 parser.add_argument('--action', action='store', dest='action', default='list-diff',
                     choices=['list-diff', 'create-google-events-from-itea', 'delete-google-events-from-itea'])
-
 args = parser.parse_args()
 
 # ITG Gcal and Itea instance
@@ -132,5 +132,13 @@ myTable = AsciiTable(myAsciiTable)
 myTable.inner_footing_row_border = True
 myTable.justify_columns[1] = myTable.justify_columns[2] = myTable.justify_columns[3] = 'right'
 
+# End script
+time_stop = datetime.datetime.now()
+time_delta = time_stop - time_start
+
 # Output data
+print "######### Date : %s - App : %s #########" % (time_start.strftime("%Y-%m-%d"),Config.get('GLOBAL','application'))
+print "- Start time : %s" % (time_start.strftime("%Y-%m-%d %H:%M:%S"))
+print "- Finish time : %s" % (time_stop.strftime("%Y-%m-%d %H:%M:%S"))
+print "- Delta time : %d second(s)" % (time_delta.total_seconds())
 print myTable.table
