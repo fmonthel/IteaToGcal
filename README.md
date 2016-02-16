@@ -4,13 +4,13 @@ ITEA calendar (Gites de France) to Google agenda Python sync report and fix
 
 	./check-diff.py -h
 	usage: check-diff.py [-h]
-	                     [--action {list-diff,purge-google-of-itea-events,create-events-from-itea-to-google}]
+	                     [--action {list-diff,create-google-events-from-itea,delete-google-events-from-itea}]
     
 	Report difference between ITEA and GCAL and propose to fix them
-     
+    
 	optional arguments:
 	  -h, --help            show this help message and exit
-	  --action {list-diff,purge-google-of-itea-events,create-events-from-itea-to-google}
+	  --action {list-diff,create-google-events-from-itea,delete-google-events-from-itea}
 	                        Action to do
 
 
@@ -18,7 +18,7 @@ To list difference between calendars :
 
 	./check-diff.py --action list-diff
 	+----------------------+------+-------+-----+--------------------------------------------+
-	| Room                 | Year | Month | Day | Issue                                      |
+	| Room                 | Year | Month | Day | Message                                    |
 	+----------------------+------+-------+-----+--------------------------------------------+
 	| COLOQUINTE           | 2016 |    02 |  26 | ITEA calendar booked but Google agenda not |
 	| COLOQUINTE           | 2016 |    02 |  28 | ITEA calendar booked but Google agenda not |
@@ -33,9 +33,9 @@ To list difference between calendars :
 
 To fix and create missing events in Google Calendar from ITEA :
 
-    ./check-diff.py --action create-events-from-itea-to-google
+    ./check-diff.py --action create-google-events-from-itea
 	+------------------+------+-------+-----+------------------------------------------------------------------------------------------------------------------------------------------------------------+
-	| Room             | Year | Month | Day | Issue                                                                                                                                                      |
+	| Room             | Year | Month | Day | Message                                                                                                                                                    |
 	+------------------+------+-------+-----+------------------------------------------------------------------------------------------------------------------------------------------------------------+
 	| CAPUCINE         | 2016 |    02 |  17 | Event created : https://www.google.com/calendar/event?eid=bjRuZG5jaGQ4N29rMmpmZXMxMDg2a2JzczQgbGVzLWNvdXJ0aWxzLmNvbV9qYTZmcml0bGRrbTFiZ21yMzJsZXVlanBnMEBn |
 	| CAPUCINE         | 2016 |    02 |  24 | Event created : https://www.google.com/calendar/event?eid=ZTJpdnA2c2l2bGtkdmdvYTVpcTdoOTU2NTQgbGVzLWNvdXJ0aWxzLmNvbV9qYTZmcml0bGRrbTFiZ21yMzJsZXVlanBnMEBn |
@@ -45,16 +45,16 @@ To fix and create missing events in Google Calendar from ITEA :
 	| Total : 4 row(s) |      |       |     |                                                                                                                                                            |
 	+------------------+------+-------+-----+------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
-To delete all Google events created from ITEA calendar by this software :
+To fix and delete overload events in Google Calendar from ITEA :
 
-	./check-diff.py --action purge-google-of-itea-events
-	+--------------------+------+-------+-----+--------------------------------------------+
-	| Room               | Year | Month | Day | Issue                                      |
-	+--------------------+------+-------+-----+--------------------------------------------+
-	| CAPUCINE           | 2016 |    02 |  16 | Itea calendar booked but Google agenda not |
-	| CAPUCINE           | 2016 |    02 |  17 | Itea calendar booked but Google agenda not |
-	| CAPUCINE           | 2016 |    02 |  21 | Itea calendar booked but Google agenda not |
-	| CAPUCINE           | 2016 |    02 |  24 | Itea calendar booked but Google agenda not |
-	+--------------------+------+-------+-----+--------------------------------------------+
-	| Total : 4 row(s)   |      |       |     |                                            |
-	+--------------------+------+-------+-----+--------------------------------------------+
+	./check-diff.py --action delete-google-events-from-itea
+	+------------------+------+-------+-----+-------------------------------------+
+	| Room             | Year | Month | Day | Message                             |
+	+------------------+------+-------+-----+-------------------------------------+
+	| CAPUCINE         | 2016 |    03 |  08 | Event deleted : Test 1              |
+	|                  |      |       |     | Event deleted : Test 2              |
+	| CAPUCINE         | 2016 |    03 |  09 | Event deleted : Test 3              |
+	| CAPUCINE         | 2016 |    03 |  10 | Google Agenda event already deleted |
+	+------------------+------+-------+-----+-------------------------------------+
+	| Total : 3 row(s) |      |       |     |                                     |
+	+------------------+------+-------+-----+-------------------------------------+

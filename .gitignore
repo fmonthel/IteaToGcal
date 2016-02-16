@@ -1,3 +1,4 @@
+*.pyc
 conf/config.ini
 conf/gcal.json
 conf/gcal-credential-validated.json

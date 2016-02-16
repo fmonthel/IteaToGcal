@@ -24,21 +24,13 @@ Config.read('conf/config.ini')
 parser = argparse.ArgumentParser(description='Report difference between ITEA and GCAL and propose to fix them')
 parser.add_argument('--action', help='Action to do', 
                     action='store', dest='action', default='list-diff',
-                    choices=['list-diff', 'purge-google-of-itea-events', 'create-events-from-itea-to-google'])
+                    choices=['list-diff', 'create-google-events-from-itea', 'delete-google-events-from-itea'])
 
 args = parser.parse_args()
 
 # ITG Gcal and Itea instance
 inst_itg_gcal = ItgGcal('conf/gcal.json', 'conf/gcal-credential-validated.json', Config.get('GLOBAL','application'))
 inst_itg_itea = ItgItea()
-
-# Cleaning of events
-if args.action == 'purge-google-of-itea-events' :
-    for room, url in Config.items('GOOGLE_CALENDAR') :
-        # Id Gcal
-        gcal_id = inst_itg_gcal.get_gcal_id_from_url(Config.get('GOOGLE_CALENDAR',room))
-        # Clean events
-        inst_itg_gcal.del_events_created_from_itea(gcal_id)
 
 # Parse Reference calendar (ITEA) and populate list
 dRefCalendar = {}
@@ -53,7 +45,7 @@ for room, url in Config.items('GOOGLE_CALENDAR') :
     dGcalCalendar[ room ] = inst_itg_gcal.export_gcal_from_ics_to_list(url)
 
 # Ascii table
-myAsciiTable = [['Room','Year','Month','Day','Issue']]
+myAsciiTable = [['Room','Year','Month','Day','Message']]
 # Check diff between dRefCalendar and dGcalCalendar
 for room in sorted(dRefCalendar) :
     for year in sorted(dRefCalendar[ room ]) :
@@ -80,8 +72,25 @@ for room in sorted(dRefCalendar) :
                     continue
                 elif gCal == 'busy' :
                     # Google booked but not Itea
-                    tmpdata.append("Google Agenda booked but ITEA calendar not") # Issue
-                    myAsciiTable.append(tmpdata)
+                    if args.action == 'delete-google-events-from-itea' :
+                        # Id Gcal
+                        gcal_id = inst_itg_gcal.get_gcal_id_from_url(Config.get('GOOGLE_CALENDAR',room))
+                        # Create event
+                        events_deleted = inst_itg_gcal.del_events_from_day(gcal_id,year+month+day)
+                        # Report event correction
+                        mess_deleted = ''
+                        for event_deleted in events_deleted :
+                            if mess_deleted :
+                                mess_deleted = mess_deleted+"\nEvent deleted : "+event_deleted.get('summary')
+                            else :
+                                mess_deleted = "Event deleted : "+event_deleted.get('summary')
+                        if not mess_deleted :
+                            mess_deleted = "Google Agenda event already deleted"
+                        tmpdata.append(mess_deleted)
+                        myAsciiTable.append(tmpdata)
+                    else :
+                        tmpdata.append("Google Agenda booked but ITEA calendar not")
+                        myAsciiTable.append(tmpdata)
                 elif rCal == 'busy' :
                     # Create event json
                     endDate = datetime.datetime.strptime(year+month+day, "%Y%m%d")
@@ -98,7 +107,7 @@ for room in sorted(dRefCalendar) :
                         'date': str(endDate.strftime("%Y"))+'-'+str(endDate.strftime("%m"))+'-'+str(endDate.strftime("%d"))
                       },
                     }
-                    if args.action == 'create-events-from-itea-to-google' :
+                    if args.action == 'create-google-events-from-itea' :
                         # Id Gcal
                         gcal_id = inst_itg_gcal.get_gcal_id_from_url(Config.get('GOOGLE_CALENDAR',room))
                         # Create event

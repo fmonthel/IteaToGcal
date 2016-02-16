@@ -46,17 +46,45 @@ class ItgGcal :
         
         self.service.events().delete(calendarId=gcal_cal_id, eventId=gcal_event_id).execute()
     
-    def del_events_created_from_itea(self, gcal_cal_id) :
-
+    def del_events_from_day(self, gcal_cal_id, day) :
+        
+        # Init data
+        day = datetime.datetime.strptime(day, "%Y%m%d")
         page_token = None
+        tmpList = []
+       # Loop
         while True :
-            events = self.service.events().list(calendarId=gcal_cal_id, pageToken=page_token).execute()
+            events = self.service.events().list(calendarId=gcal_cal_id, timeMin=day.strftime("%Y-%m-%dT00:00:00Z"),
+                                                timeMax=day.strftime("%Y-%m-%dT23:00:00Z"), pageToken=page_token).execute()
             for event in events['items'] :
-                if 'summary' in event.keys() and event['summary'] == self.LABEL_SUM_ITEA :
-                    self.del_event(gcal_cal_id, event['id'])
+                # Keep data for reporting
+                tmpList.append(event)
+                # Delete event
+                self.del_event(gcal_cal_id, event['id'])
             page_token = events.get('nextPageToken')
             if not page_token :
                 break
+        # Return list
+        return tmpList
+    
+    def del_events_created_from_itea(self, gcal_cal_id) :
+        
+        # Init data
+        page_token = None
+        tmpList = []
+        # Loop
+        while True :
+            events = self.service.events().list(calendarId=gcal_cal_id, q=self.LABEL_SUM_ITEA, pageToken=page_token).execute()
+            for event in events['items'] :
+                # Keep data for reporting
+                tmpList.append(event)
+                # Delete event
+                self.del_event(gcal_cal_id, event['id'])
+            page_token = events.get('nextPageToken')
+            if not page_token :
+                break
+        # Return list
+        return tmpList
     
     def export_gcal_from_ics_to_list(self, url_ics) :
         
