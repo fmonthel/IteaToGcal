@@ -22,8 +22,8 @@ Config.read('conf/config.ini')
 
 # Options
 parser = argparse.ArgumentParser(description='Report difference between ITEA and GCAL and propose to fix them')
-parser.add_argument('--action', help='Action to do', 
-                    action='store', dest='action', default='list-diff',
+parser.add_argument('--noauth_local_webserver', action='store_true', help='Needed for first execution (Google Agenda authentication)')
+parser.add_argument('--action', action='store', dest='action', default='list-diff',
                     choices=['list-diff', 'create-google-events-from-itea', 'delete-google-events-from-itea'])
 
 args = parser.parse_args()
