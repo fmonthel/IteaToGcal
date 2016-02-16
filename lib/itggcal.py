@@ -29,7 +29,7 @@ class ItgGcal :
         if not credentials or credentials.invalid:
             flow = client.flow_from_clientsecrets(self.cred_secret_file, 'https://www.googleapis.com/auth/calendar')
             flow.user_agent = self.app_name
-            credentials = tools.run(flow, store)
+            credentials = tools.run_flow(flow, store)
         return credentials
     
     def get_gcal_id_from_url(self, gcal_private_url) :
