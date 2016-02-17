@@ -26,6 +26,10 @@ Usage :
 To list difference between calendars :
 
 	./check-diff.py --action list-diff
+	######### Date : 2016-02-17 - App : IteaToGcal #########
+	- Start time : 2016-02-17 03:49:44
+	- Finish time : 2016-02-17 03:50:03
+	- Delta time : 18 second(s)
 	+----------------------+------+-------+-----+--------------------------------------------+
 	| Room                 | Year | Month | Day | Message                                    |
 	+----------------------+------+-------+-----+--------------------------------------------+
@@ -43,6 +47,10 @@ To list difference between calendars :
 To fix and create missing events in Google Calendar from ITEA :
 
     ./check-diff.py --action create-google-events-from-itea
+	######### Date : 2016-02-17 - App : IteaToGcal #########
+	- Start time : 2016-02-17 03:49:44
+	- Finish time : 2016-02-17 03:50:03
+	- Delta time : 18 second(s)
 	+------------------+------+-------+-----+------------------------------------------------------------------------------------------------------------------------------------------------------------+
 	| Room             | Year | Month | Day | Message                                                                                                                                                    |
 	+------------------+------+-------+-----+------------------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -57,6 +65,10 @@ To fix and create missing events in Google Calendar from ITEA :
 To fix and delete overload events in Google Calendar from ITEA :
 
 	./check-diff.py --action delete-google-events-from-itea
+	######### Date : 2016-02-17 - App : IteaToGcal #########
+	- Start time : 2016-02-17 03:49:44
+	- Finish time : 2016-02-17 03:50:03
+	- Delta time : 18 second(s)
 	+------------------+------+-------+-----+-------------------------------------+
 	| Room             | Year | Month | Day | Message                             |
 	+------------------+------+-------+-----+-------------------------------------+
