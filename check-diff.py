@@ -40,13 +40,13 @@ inst_itg_itea = ItgItea()
 dRefCalendar = {}
 for room, url in Config.items('ITEA_CALENDAR') :
     # Populate list
-    dRefCalendar[ room ] = inst_itg_itea.export_itea_from_url_to_dic(url)
+    dRefCalendar[ room ] = inst_itg_itea.export_from_html_to_dic(url)
 
 # Parse Google agenda and populate dictionnary
 dGcalCalendar = {}
 for room, url in Config.items('GOOGLE_CALENDAR') :
     # Populate list
-    dGcalCalendar[ room ] = inst_itg_gcal.export_gcal_from_ics_to_dic(url)
+    dGcalCalendar[ room ] = inst_itg_gcal.export_from_ics_to_dic(url)
 
 # Ascii table
 myAsciiTable = [['Room','Year','Month','Day','Message']]
@@ -78,7 +78,7 @@ for room in sorted(dRefCalendar) :
                     # Google booked but not Itea
                     if args.action == 'delete-google-events-from-itea' :
                         # Id Gcal
-                        gcal_id = inst_itg_gcal.get_gcal_id_from_url(Config.get('GOOGLE_CALENDAR',room))
+                        gcal_id = inst_itg_gcal.get_cal_id_from_url(Config.get('GOOGLE_CALENDAR',room))
                         # Create event
                         events_deleted = inst_itg_gcal.del_events_from_day(gcal_id,year+month+day)
                         # Report event correction
@@ -113,7 +113,7 @@ for room in sorted(dRefCalendar) :
                     }
                     if args.action == 'create-google-events-from-itea' :
                         # Id Gcal
-                        gcal_id = inst_itg_gcal.get_gcal_id_from_url(Config.get('GOOGLE_CALENDAR',room))
+                        gcal_id = inst_itg_gcal.get_cal_id_from_url(Config.get('GOOGLE_CALENDAR',room))
                         # Create event
                         event_created = inst_itg_gcal.insert_event(gcal_id,event)
                         # Report event correction

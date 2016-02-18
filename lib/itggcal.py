@@ -37,7 +37,7 @@ class ItgGcal :
             credentials = tools.run_flow(flow, store, flags)
         return credentials
     
-    def get_gcal_id_from_url(self, gcal_private_url) :
+    def get_cal_id_from_url(self, gcal_private_url) :
         """Method to get Google ID of one calendar ID based on private URL"""
     
         match = re.search(r"ical\/(.*)\/private", gcal_private_url)
@@ -96,7 +96,7 @@ class ItgGcal :
         # Return list
         return tmpList
     
-    def export_gcal_from_ics_to_dic(self, url_ics) :
+    def export_from_ics_to_dic(self, url_ics) :
         """Method to export busy days of one Google Calendar to a dictionary : dic[ year ][ month ][ day ] = busy"""
         
         # Get data from ICS URL
@@ -122,6 +122,7 @@ class ItgGcal :
                         tmpDic[ str(currentDate.strftime("%Y")) ] = {}
                     if str(currentDate.strftime("%m")) not in tmpDic[ str(currentDate.strftime("%Y")) ].keys() :
                         tmpDic[ str(currentDate.strftime("%Y")) ][ str(currentDate.strftime("%m")) ] = {}
+                    # Populate dictionnary
                     tmpDic[ str(currentDate.strftime("%Y")) ][ str(currentDate.strftime("%m")) ][ str(currentDate.strftime("%d")) ] = 'busy'
                     # Increment currentDate
                     currentDate += datetime.timedelta(days=1)
