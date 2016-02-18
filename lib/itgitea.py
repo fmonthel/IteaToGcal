@@ -60,7 +60,7 @@ class ItgItea :
                         currentMonth = 1
                     else :
                         currentMonth = currentMonth + 1
-                    currentDay = day
+                currentDay = day
                 # Populate dictionnary
                 tmpDic[ str("%04d" % int(currentYear)) ][ str("%02d" % int(currentMonth)) ][ str("%02d" % int(currentDay)) ] = dispo
             i = i + 1
@@ -75,13 +75,13 @@ class ItgItea :
         class_room = "".join(tree.xpath('//option[@selected]/@data-classe_a_afficher'))
         months = tree.xpath('//caption[@data-annee]/@data-annee | //caption[@data-annee]/@data-mois')
         days = tree.xpath('//table[@class="calend"]//span[contains(@class,"'+class_room+'")]/@class | //table[@class="calend"]//span[contains(@class,"'+class_room+'")]/text()')
-
+        
         tmpDic = {}
         # Parsing of months list and build structure [year][month]
         tmpDic = self._populate_dic_from_months(tmpDic,months)
 
         # Parsing of days list and fill structure [year][month][day] = busy|nostatus|available
-        tmpDic = self._populate_dic_from_days(tmpDic,months)
+        tmpDic = self._populate_dic_from_days(tmpDic,days)
     
         # Return dictionary
         return tmpDic
