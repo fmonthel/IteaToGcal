@@ -36,17 +36,17 @@ file_gcal_cred_validated = os.path.join(os.path.dirname(__file__), 'conf/gcal-cr
 inst_itg_gcal = ItgGcal(file_gcal, file_gcal_cred_validated, Config.get('GLOBAL','application'))
 inst_itg_itea = ItgItea()
 
-# Parse Reference calendar (ITEA) and populate list
+# Parse Reference calendar (ITEA) and populate dictionnary
 dRefCalendar = {}
 for room, url in Config.items('ITEA_CALENDAR') :
     # Populate list
-    dRefCalendar[ room ] = inst_itg_itea.export_itea_from_url_to_list(url)
+    dRefCalendar[ room ] = inst_itg_itea.export_itea_from_url_to_dic(url)
 
-# Parse Google agenda and populate list
+# Parse Google agenda and populate dictionnary
 dGcalCalendar = {}
 for room, url in Config.items('GOOGLE_CALENDAR') :
     # Populate list
-    dGcalCalendar[ room ] = inst_itg_gcal.export_gcal_from_ics_to_list(url)
+    dGcalCalendar[ room ] = inst_itg_gcal.export_gcal_from_ics_to_dic(url)
 
 # Ascii table
 myAsciiTable = [['Room','Year','Month','Day','Message']]

@@ -5,9 +5,10 @@ import requests
 from lxml import html
 
 class ItgItea :
+    """Class to manage ITEA Calendar events"""
 
-    # Function to export ITEA data to list
-    def export_itea_from_url_to_list(self, url_html) :
+    def export_itea_from_url_to_dic(self, url_html) :
+        """Method to export ITEA Calendar to a dictionary : dic[ year ][ month ][ day ] = busy|nostatus|available"""
 
         # Get data from URL
         tree = html.fromstring(requests.get(url_html).content)
@@ -16,7 +17,7 @@ class ItgItea :
         days = tree.xpath('//table[@class="calend"]//span[contains(@class,"'+class_room+'")]/@class | //table[@class="calend"]//span[contains(@class,"'+class_room+'")]/text()')
 
         # Parsing of date
-        tmpList = {}
+        tmpDic = {}
         year = ''
         i = 0
         for month in months :
@@ -29,9 +30,9 @@ class ItgItea :
             if (i % 2) == 0 : # Year
                 if(year != month) :
                     year = month
-                    tmpList[ str("%04d" % int(year)) ] = {}
+                    tmpDic[ str("%04d" % int(year)) ] = {}
             else : # Month
-                tmpList[ str("%04d" % int(year)) ][ str("%02d" % int(month)) ] = {}
+                tmpDic[ str("%04d" % int(year)) ][ str("%02d" % int(month)) ] = {}
             i = i + 1
 
         # Parsing of days
@@ -56,8 +57,8 @@ class ItgItea :
                     else :
                         currentMonth = currentMonth + 1
                 currentDay = day
-                tmpList[ str("%04d" % int(currentYear)) ][ str("%02d" % int(currentMonth)) ][ str("%02d" % int(currentDay)) ] = dispo
+                tmpDic[ str("%04d" % int(currentYear)) ][ str("%02d" % int(currentMonth)) ][ str("%02d" % int(currentDay)) ] = dispo
             i = i + 1
     
-        # Return list
-        return tmpList
+        # Return dictionary
+        return tmpDic
