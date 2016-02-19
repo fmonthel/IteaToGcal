@@ -44,6 +44,26 @@ class ItgGcal :
         if(match) :
             return match.group(1)
     
+    def generate_event_for_itea(self, day, location) :
+        """Method to generate Json value for ITEA event into one Google Calendar"""
+    
+        # Create event json
+        startDate = datetime.datetime.strptime(day, "%Y%m%d")
+        endDate = startDate + datetime.timedelta(days=1)
+        event = {
+          'summary': self.LABEL_SUM_ITEA,
+          'location': location,
+          'description': 'Booking with data from ITEA calendar - Powered by '+self.app_name,
+          'start': {
+            'date': str(startDate.strftime("%Y"))+'-'+str(startDate.strftime("%m"))+'-'+str(startDate.strftime("%d"))
+          },
+          'end': {
+            'date': str(endDate.strftime("%Y"))+'-'+str(endDate.strftime("%m"))+'-'+str(endDate.strftime("%d"))
+          },
+        }
+        # Return Json
+        return event
+    
     def insert_event(self, gcal_cal_id, event) :
         """Method to insert one event into one Google Calendar"""
         

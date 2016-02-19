@@ -69,24 +69,11 @@ for dic_item in list_cal_diff :
     if dic_item['type'] == 'itea-yes-gcal-not' :
         # Create Google event ?
         if args.action == 'create-google-events-from-itea' :
-            # Create event json
-            endDate = datetime.datetime.strptime(dic_item['year']+dic_item['month']+dic_item['day'], "%Y%m%d")
-            endDate += datetime.timedelta(days=1)
-            event = {
-              'summary': 'Booking from ITEA calendar',
-              'location': Config.get('GLOBAL','location'),
-              'description': 'Booking with data from ITEA calendar - Powered by '+Config.get('GLOBAL','application'),
-              'start': {
-                'date': dic_item['year']+'-'+dic_item['month']+'-'+dic_item['day']
-              },
-              'end': {
-                'date': str(endDate.strftime("%Y"))+'-'+str(endDate.strftime("%m"))+'-'+str(endDate.strftime("%d"))
-              },
-            }
             # Id Gcal
             gcal_id = inst_itg_gcal.get_cal_id_from_url(Config.get('GOOGLE_CALENDAR',dic_item['room']))
             # Create event
-            event_created = inst_itg_gcal.insert_event(gcal_id,event)
+            event_json = inst_itg_gcal.generate_event_for_itea(dic_item['year']+dic_item['month']+dic_item['day'], Config.get('GLOBAL','location'))
+            event_created = inst_itg_gcal.insert_event(gcal_id,event_json)
             # Add message to list
             tmpdata.append("Event created : "+event_created.get('htmlLink'))
         else :
