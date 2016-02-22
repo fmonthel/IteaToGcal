@@ -12,6 +12,11 @@ class ItgItea :
     def _populate_dic_from_months(self, dic, months) :
         """Method to populate dictionnary from months list [{year1,month1},{year1,month2}]"""
   
+        # Check
+        if not isinstance(dic, dict) :
+            raise TypeError('Param "dic" must be a dict')
+        if not isinstance(months, list) :
+            raise TypeError('Param "months" must be a list')
         # Init
         tmpDic = dic
         year = ''
@@ -30,13 +35,18 @@ class ItgItea :
                     tmpDic[ str("%04d" % int(year)) ] = {}
             else : # Month
                 tmpDic[ str("%04d" % int(year)) ][ str("%02d" % int(month)) ] = {}
-            i = i + 1
+            i += 1
         # Return dictionnary
         return tmpDic
     
     def _populate_dic_from_days(self, dic, days) :
         """Method to populate dictionnary from days list [{CssClassx,Daynumber1},{CssClassy,Daynumber2}]"""
 
+        # Check
+        if not isinstance(dic, dict) :
+            raise TypeError('Param "dic" must be a dict')
+        if not isinstance(days, list) :
+            raise TypeError('Param "days" must be a list')
         # Init
         tmpDic = dic
         currentYear = self.first_year
@@ -63,7 +73,7 @@ class ItgItea :
                 currentDay = day
                 # Populate dictionnary
                 tmpDic[ str("%04d" % int(currentYear)) ][ str("%02d" % int(currentMonth)) ][ str("%02d" % int(currentDay)) ] = dispo
-            i = i + 1
+            i += 1
         # Return dictionnary
         return tmpDic        
     
