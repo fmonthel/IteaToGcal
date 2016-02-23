@@ -47,6 +47,8 @@ class ItgItea :
             raise TypeError('Param "dic" must be a dict')
         if not isinstance(days, list) :
             raise TypeError('Param "days" must be a list')
+        if not self.first_year or not self.first_month :
+            raise ValueError('Values "first_year" and/or "first_month not defined - Method _populate_dic_from_months must be call before"')
         # Init
         tmpDic = dic
         currentYear = self.first_year
