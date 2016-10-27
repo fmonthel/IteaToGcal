@@ -65,7 +65,7 @@ class ItgItea :
                     dispo = 'busy'
                 else :
                     dispo = 'nostatus'
-            else : # Day
+            elif re.search("^[0-9]{2}$", day) : # Day
                 if day < currentDay :
                     if currentMonth == 12 :
                         currentYear = currentYear + 1
