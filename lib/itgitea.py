@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import re
+import datetime
 import requests
 from lxml import html
 
@@ -57,7 +58,7 @@ class ItgItea :
         i = 0
         # Parsing of list  
         for day in days :
-            if (i % 2) == 0 : # Class
+            if not re.search("^[0-9]{2}$", day): # Class
                 classDay = day
                 if re.search(r"Cliquable", classDay) :
                     dispo = 'available'
@@ -73,8 +74,13 @@ class ItgItea :
                     else :
                         currentMonth = currentMonth + 1
                 currentDay = day
-                # Populate dictionnary
-                tmpDic[ str("%04d" % int(currentYear)) ][ str("%02d" % int(currentMonth)) ][ str("%02d" % int(currentDay)) ] = dispo
+                try :
+                    newDate = datetime.datetime(int(currentYear), int(currentMonth), int(currentDay))
+                except ValueError :
+                    print str(currentYear)+str(currentMonth)+str(currentDay)
+                else :
+                    # Populate dictionnary
+                    tmpDic[ str("%04d" % int(currentYear)) ][ str("%02d" % int(currentMonth)) ][ str("%02d" % int(currentDay)) ] = dispo
             i += 1
         # Return dictionnary
         return tmpDic        
